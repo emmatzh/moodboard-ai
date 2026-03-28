@@ -3,58 +3,129 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MoodBoard AI</title>
+  <title>Moodly</title>
   <link rel="stylesheet" href="style.css" />
-  <script src="config.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
-  <!-- NAV TABS -->
-  <nav>
-    <button onclick="showTab('moodboard')" id="tab-moodboard" class="tab-btn active">🎨 Moodboard</button>
-    <button onclick="showTab('checkin')" id="tab-checkin" class="tab-btn">🌿 Daily Check-in</button>
-  </nav>
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-content">
+      <h1 class="hero-name">Moodly</h1>
+      <p class="hero-tagline">Your aesthetic. Your mood. Your world.</p>
+      <div class="hero-features">
+        <span class="hero-pill">🎨 AI Moodboard Generator</span>
+        <span class="hero-pill">🌿 Daily Mental Health Check-in</span>
+        <span class="hero-pill">💾 Download Your Board</span>
+      </div>
+    </div>
+  </div>
 
-  <!-- MOODBOARD TAB -->
-  <section id="moodboard-tab">
-    <h1>MoodBoard AI</h1>
-    <p class="subtitle">Describe a vibe and we'll build your aesthetic.</p>
+  <!-- SPLIT SCREEN -->
+  <div class="split-container">
 
-    <div class="input-row">
-      <input type="text" id="vibeInput" placeholder="e.g. cozy autumn cabin, warm tea..." />
-      <button id="generateBtn" onclick="generateMoodboard()">Generate ✨</button>
+    <!-- LEFT: CHECK-IN -->
+    <div class="left-panel" id="checkin-panel">
+      <div class="checkin-hero" id="checkinHero">
+        <p class="checkin-hero-text" id="streakLine">Day 1 of showing up for yourself ✨</p>
+        <h1>Daily Check-in 🌿</h1>
+        <p class="subtitle">How are you feeling today?</p>
+      </div>
+
+      <div class="checkin-content">
+        <div id="emojiPicker">
+          <div class="emoji-wrap">
+            <button class="emoji-btn" data-mood="happy" onclick="selectMood(this)">😊</button>
+            <span class="emoji-label">Happy</span>
+          </div>
+          <div class="emoji-wrap">
+            <button class="emoji-btn" data-mood="sad" onclick="selectMood(this)">😔</button>
+            <span class="emoji-label">Sad</span>
+          </div>
+          <div class="emoji-wrap">
+            <button class="emoji-btn" data-mood="angry" onclick="selectMood(this)">😤</button>
+            <span class="emoji-label">Angry</span>
+          </div>
+          <div class="emoji-wrap">
+            <button class="emoji-btn" data-mood="tired" onclick="selectMood(this)">😴</button>
+            <span class="emoji-label">Tired</span>
+          </div>
+          <div class="emoji-wrap">
+            <button class="emoji-btn" data-mood="anxious" onclick="selectMood(this)">😰</button>
+            <span class="emoji-label">Anxious</span>
+          </div>
+          <div class="emoji-wrap">
+            <button class="emoji-btn" data-mood="excited" onclick="selectMood(this)">🤩</button>
+            <span class="emoji-label">Excited</span>
+          </div>
+        </div>
+
+        <textarea id="dayInput" placeholder="What's been on your mind today? Let it out..."></textarea>
+        <button id="affirmBtn" onclick="getAffirmation()">Get My Affirmation 💫</button>
+
+        <div id="affirmLoader" style="display:none;">Finding the right words...</div>
+        <div id="affirmCard" style="display:none;"></div>
+        <div id="playlistCard" style="display:none;">
+        <p class="playlist-label">🎵 A playlist for your mood</p>
+        <iframe id="spotifyEmbed" 
+            src="" 
+            width="100%" 
+            height="152" 
+            frameborder="0" 
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+            loading="lazy"
+            style="border-radius: 12px;">
+        </iframe>
+    </div>
+      </div>
     </div>
 
-    <div class="upload-section">
-      <label for="imageUpload" class="upload-label">+ Add your own photo</label>
-      <input type="file" id="imageUpload" accept="image/*" />
-      <img id="userImage" style="display:none;" />
+    <!-- RIGHT: MOODBOARD -->
+    <div class="right-panel">
+      <div class="right-top">
+        <div class="moodboard-header">
+          <p class="section-label">Your Moodboard</p>
+          <div class="input-row">
+            <input type="text" id="vibeInput" placeholder="or type your own vibe..." />
+            <button id="generateBtn" onclick="generateMoodboard()">Generate ✨</button>
+          </div>
+          <div class="vibe-tags">
+            <p class="vibe-tags-label">Or pick a vibe:</p>
+            <div class="vibe-tag-row">
+              <button class="vibe-tag" onclick="selectVibe('calm ocean minimal')">🌊 Calm</button>
+              <button class="vibe-tag" onclick="selectVibe('happy pastel cute')">😊 Happy</button>
+              <button class="vibe-tag" onclick="selectVibe('dark academia gothic')">📚 Dark Academia</button>
+              <button class="vibe-tag" onclick="selectVibe('cozy autumn cabin hygge')">🍂 Cozy</button>
+              <button class="vibe-tag" onclick="selectVibe('forest nature botanical')">🌲 Forest</button>
+              <button class="vibe-tag" onclick="selectVibe('luxury opulent royal glam')">✨ Luxury</button>
+              <button class="vibe-tag" onclick="selectVibe('minimal clean zen nordic')">🤍 Minimal</button>
+              <button class="vibe-tag" onclick="selectVibe('cottage garden floral whimsical')">🌿 Cottagecore</button>
+              <button class="vibe-tag" onclick="selectVibe('sunset dusk twilight')">🌅 Sunset</button>
+              <button class="vibe-tag" onclick="selectVibe('neon cyberpunk synthwave')">🌃 Neon</button>
+            </div>
+          </div>
+          <div class="upload-section">
+            <label for="imageUpload" class="upload-label">+ Add your own photo</label>
+            <input type="file" id="imageUpload" accept="image/*" />
+            <img id="userImage" style="display:none;" />
+          </div>
+        </div>
+      </div>
+
+      <div id="loader" style="display:none;">✨ Generating your vibe...</div>
+      <div id="board" style="display:none;"></div>
+      <button id="exportBtn" onclick="exportBoard()" style="display:none;">Download Moodboard 💾</button>
+
+      <!-- EMPTY STATE -->
+      <div class="empty-state" id="emptyState">
+        <p class="empty-icon">🎨</p>
+        <p class="empty-title">Your moodboard will appear here</p>
+        <p class="empty-sub">Pick a mood on the left or type a vibe above</p>
+      </div>
     </div>
 
-    <div id="loader" style="display:none;">✨ Generating your vibe...</div>
-    <div id="board" style="display:none;"></div>
-  </section>
-
-  <!-- CHECKIN TAB -->
-  <section id="checkin-tab" style="display:none;">
-    <h1>Daily Check-in 🌿</h1>
-    <p class="subtitle">How are you feeling today?</p>
-
-    <div id="emojiPicker">
-      <button class="emoji-btn" data-mood="happy" onclick="selectMood(this)">😊</button>
-      <button class="emoji-btn" data-mood="sad" onclick="selectMood(this)">😔</button>
-      <button class="emoji-btn" data-mood="angry" onclick="selectMood(this)">😤</button>
-      <button class="emoji-btn" data-mood="tired" onclick="selectMood(this)">😴</button>
-      <button class="emoji-btn" data-mood="anxious" onclick="selectMood(this)">😰</button>
-      <button class="emoji-btn" data-mood="excited" onclick="selectMood(this)">🤩</button>
-    </div>
-
-    <textarea id="dayInput" placeholder="Tell us about your day..."></textarea>
-    <button id="affirmBtn" onclick="getAffirmation()">Get My Affirmation 💫</button>
-
-    <div id="affirmLoader" style="display:none;">Finding the right words...</div>
-    <div id="affirmCard" style="display:none;"></div>
-  </section>
+  </div>
 
   <script src="script.js"></script>
 </body>
